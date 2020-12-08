@@ -24,6 +24,6 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: mvn -Be clean install jacoco:report coveralls:report
+      run: mvn -B clean install jacoco:report coveralls:report
       env:
         COVERALLS_TOKEN:  ${{ secrets.COVERALLS_TOKEN }}
