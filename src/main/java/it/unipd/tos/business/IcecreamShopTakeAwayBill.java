@@ -19,7 +19,8 @@ public class IcecreamShopTakeAwayBill implements TakeAwayBill {
                 total+=i.getPrice();
                 if(i.getItemType()==MenuItem.ItemType.GELATO){
                     ++icecreamsCounter;
-                    if(cheaperIcecream==null || i.getPrice()<cheaperIcecream.getPrice()){
+                    if(cheaperIcecream==null || 
+                    i.getPrice()<cheaperIcecream.getPrice()){
                         cheaperIcecream=i;
                     }
                 }
