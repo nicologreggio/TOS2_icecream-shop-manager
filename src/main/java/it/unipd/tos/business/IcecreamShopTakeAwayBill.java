@@ -13,10 +13,26 @@ public class IcecreamShopTakeAwayBill implements TakeAwayBill {
     public double getOrderPrice(List<MenuItem> itemsOrdered, User user) 
         throws TakeAwayBillException{
             double total=0;
+            int icecreamsCounter=0;
+            MenuItem cheaperIcecream=null;
             for(MenuItem i:itemsOrdered){
                 total+=i.getPrice();
+                if(i.getItemType()==MenuItem.ItemType.GELATO){
+                    ++icecreamsCounter;
+                    if(cheaperIcecream==null || i.getPrice()<cheaperIcecream.getPrice()){
+                        cheaperIcecream=i;
+                    }
+                }
+            }
+
+            if(icecreamsCounter>5){
+                total-=discount(cheaperIcecream.getPrice(), 50);
             }
 
             return total;
         }
+
+    private double discount(double amnt, double p){
+        return amnt*p/100;
+    }
 }

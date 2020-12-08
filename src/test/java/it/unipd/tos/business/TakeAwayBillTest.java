@@ -23,15 +23,24 @@ import it.unipd.tos.model.User;
 public class TakeAwayBillTest {
     private final static double DELTA=1e-4;
     
+    private static IcecreamShopTakeAwayBill shop;
     private static ArrayList<MenuItem> orderList;
+    private static MenuItem icecream;
+    private static MenuItem pudding;
+    private static MenuItem drink;
     private static User user;
     
     @BeforeClass
     public static void initialSetup(){
+        shop=new IcecreamShopTakeAwayBill();        
         orderList=new ArrayList<>();
-        orderList.add(new MenuItem(MenuItem.ItemType.GELATO, "banana", 1.5));
-        orderList.add(new MenuItem(MenuItem.ItemType.BEVANDA, "acqua", 4.0));
-        orderList.add(new MenuItem(MenuItem.ItemType.BUDINO, "pinguino", 3.5));
+        icecream=new MenuItem(MenuItem.ItemType.GELATO, "banana", 1.5);
+        drink=new MenuItem(MenuItem.ItemType.BEVANDA, "acqua", 4.0);
+        pudding=new MenuItem(MenuItem.ItemType.BUDINO, "pinguino", 3.5);
+
+        orderList.add(icecream);
+        orderList.add(pudding);
+        orderList.add(drink);
         
         user=new User("Nicolo", "Greggio", 21);
     }
@@ -39,7 +48,17 @@ public class TakeAwayBillTest {
 
     @Test
     public void testSimpleOrder() throws TakeAwayBillException{
-        IcecreamShopTakeAwayBill shop=new IcecreamShopTakeAwayBill();
         assertEquals(9, shop.getOrderPrice(orderList, user), DELTA);
+    }
+
+    @Test
+    public void testDiscountMoreThan5IceCreams() throws TakeAwayBillException{
+        ArrayList<MenuItem> l=new ArrayList<>(orderList);
+        for(int i=0; i<5; ++i){
+            l.add(icecream);
+        }
+        assertEquals(15.75, shop.getOrderPrice(l, user), DELTA);
+        l.add(new MenuItem(MenuItem.ItemType.GELATO, "panna", 1.2));
+        assertEquals(17.1, shop.getOrderPrice(l, user), DELTA);
     }
 }
