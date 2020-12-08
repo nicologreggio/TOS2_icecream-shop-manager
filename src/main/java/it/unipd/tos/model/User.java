@@ -5,17 +5,16 @@
 package it.unipd.tos.model;
 
 public class User {
+    private static int nextID=0;
+    
     private String firstName, lastName;
-    private int age;
+    private int age, id;
 
     public User(String first, String last, int age){
         this.firstName=first;
         this.lastName=last;
         this.age=age;
-    }
-
-    public String getDetails(){
-        return firstName+" "+lastName+", age: "+age;
+        this.id=++nextID;
     }
 
     public String getFirstName(){
@@ -28,5 +27,13 @@ public class User {
 
     public int getAge(){
         return age;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public static int getNextId(){
+        return nextID+1;
     }
 }
