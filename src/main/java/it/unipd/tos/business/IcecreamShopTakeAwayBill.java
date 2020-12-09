@@ -30,6 +30,10 @@ public class IcecreamShopTakeAwayBill implements TakeAwayBill {
                 total-=discount(cheaperIcecream.getPrice(), 50);
             }
 
+            if(total>50){
+                total-=discount(total, 10);
+            }
+
             return total;
         }
 

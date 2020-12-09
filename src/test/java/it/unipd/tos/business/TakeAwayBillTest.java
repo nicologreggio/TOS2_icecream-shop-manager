@@ -61,4 +61,11 @@ public class TakeAwayBillTest {
         l.add(new MenuItem(MenuItem.ItemType.GELATO, "panna", 1.2));
         assertEquals(17.1, shop.getOrderPrice(l, user), DELTA);
     }
+
+    @Test
+    public void testDiscountOver50() throws TakeAwayBillException{
+        ArrayList<MenuItem> l=new ArrayList<>(orderList);
+        l.add(new MenuItem(MenuItem.ItemType.BEVANDA, "super", 51));
+        assertEquals(54, shop.getOrderPrice(l, user), DELTA);
+    }
 }
