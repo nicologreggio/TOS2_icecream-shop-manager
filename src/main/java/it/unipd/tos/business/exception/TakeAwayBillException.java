@@ -5,13 +5,10 @@
 package it.unipd.tos.business.exception;
 
 public class TakeAwayBillException extends Exception{
-    private String errMessage;
 
-    TakeAwayBillException(String err){
-        this.errMessage=err;
-    }
+    private static final long serialVersionUID = 1L;
 
-    public String getErrorMessage(){
-        return errMessage;
+    public TakeAwayBillException(String err) {
+        super(err);
     }
 }
