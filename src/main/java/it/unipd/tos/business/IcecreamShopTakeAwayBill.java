@@ -15,6 +15,9 @@ public class IcecreamShopTakeAwayBill implements TakeAwayBill {
             double total=0;
             int icecreamsCounter=0;
             MenuItem cheaperIcecream=null;
+            if(itemsOrdered.size()>30){
+                throw new TakeAwayBillException("Limite 30 ordini superato.");
+            } 
             for(MenuItem i:itemsOrdered){
                 total+=i.getPrice();
                 if(i.getItemType()==MenuItem.ItemType.GELATO){

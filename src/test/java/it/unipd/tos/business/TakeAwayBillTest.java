@@ -68,4 +68,19 @@ public class TakeAwayBillTest {
         l.add(new MenuItem(MenuItem.ItemType.BEVANDA, "super", 51));
         assertEquals(54, shop.getOrderPrice(l, user), DELTA);
     }
+
+    @Test(expected = TakeAwayBillException.class)
+    public void testErrOnMoreThan30Items() throws TakeAwayBillException{
+        ArrayList<MenuItem> l=new ArrayList<>(orderList);
+        for(int i=0; i<28; ++i){
+            l.add(pudding);
+        }
+        try{
+            shop.getOrderPrice(l, user);
+        }
+        catch(TakeAwayBillException e){
+            assertEquals("Limite 30 ordini superato.", e.getMessage());
+            throw e;
+        }
+    }
 }

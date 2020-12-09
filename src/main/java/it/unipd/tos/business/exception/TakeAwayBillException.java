@@ -8,7 +8,7 @@ public class TakeAwayBillException extends Exception{
 
     private static final long serialVersionUID = 1L;
 
-    TakeAwayBillException(String err) {
+    public TakeAwayBillException(String err) {
         super(err);
     }
 }
