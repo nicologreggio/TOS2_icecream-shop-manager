@@ -37,6 +37,10 @@ public class IcecreamShopTakeAwayBill implements TakeAwayBill {
                 total-=discount(total, 10);
             }
 
+            if(total<10){
+                total+=0.5;
+            }
+
             return total;
         }
 

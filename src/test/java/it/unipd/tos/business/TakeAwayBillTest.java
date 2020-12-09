@@ -24,63 +24,67 @@ public class TakeAwayBillTest {
     private final static double DELTA=1e-4;
     
     private static IcecreamShopTakeAwayBill shop;
-    private static ArrayList<MenuItem> orderList;
     private static MenuItem icecream;
     private static MenuItem pudding;
     private static MenuItem drink;
     private static User user;
+    private ArrayList<MenuItem> orderList;
     
     @BeforeClass
     public static void initialSetup(){
         shop=new IcecreamShopTakeAwayBill();        
-        orderList=new ArrayList<>();
         icecream=new MenuItem(MenuItem.ItemType.GELATO, "banana", 1.5);
         drink=new MenuItem(MenuItem.ItemType.BEVANDA, "acqua", 4.0);
         pudding=new MenuItem(MenuItem.ItemType.BUDINO, "pinguino", 3.5);
-
-        orderList.add(icecream);
-        orderList.add(pudding);
-        orderList.add(drink);
-        
         user=new User("Nicolo", "Greggio", 21);
     }
 
+    @Before
+    public void beforeEachTest(){
+        orderList=new ArrayList<>();
+        orderList.add(icecream);
+        orderList.add(pudding);
+        orderList.add(drink);
+    }
 
     @Test
     public void testSimpleOrder() throws TakeAwayBillException{
-        assertEquals(9, shop.getOrderPrice(orderList, user), DELTA);
+        orderList.add(pudding);
+        assertEquals(12.5, shop.getOrderPrice(orderList, user), DELTA);
     }
 
     @Test
     public void testDiscountMoreThan5IceCreams() throws TakeAwayBillException{
-        ArrayList<MenuItem> l=new ArrayList<>(orderList);
         for(int i=0; i<5; ++i){
-            l.add(icecream);
+            orderList.add(icecream);
         }
-        assertEquals(15.75, shop.getOrderPrice(l, user), DELTA);
-        l.add(new MenuItem(MenuItem.ItemType.GELATO, "panna", 1.2));
-        assertEquals(17.1, shop.getOrderPrice(l, user), DELTA);
+        assertEquals(15.75, shop.getOrderPrice(orderList, user), DELTA);
+        orderList.add(new MenuItem(MenuItem.ItemType.GELATO, "panna", 1.2));
+        assertEquals(17.1, shop.getOrderPrice(orderList, user), DELTA);
     }
 
     @Test
-    public void testDiscountOver50() throws TakeAwayBillException{
-        ArrayList<MenuItem> l=new ArrayList<>(orderList);
-        l.add(new MenuItem(MenuItem.ItemType.BEVANDA, "super", 51));
-        assertEquals(54, shop.getOrderPrice(l, user), DELTA);
+    public void testDiscountOver50Euros() throws TakeAwayBillException{
+        orderList.add(new MenuItem(MenuItem.ItemType.BEVANDA, "super", 51));
+        assertEquals(54, shop.getOrderPrice(orderList, user), DELTA);
     }
 
     @Test(expected = TakeAwayBillException.class)
     public void testErrOnMoreThan30Items() throws TakeAwayBillException{
-        ArrayList<MenuItem> l=new ArrayList<>(orderList);
         for(int i=0; i<28; ++i){
-            l.add(pudding);
+            orderList.add(pudding);
         }
         try{
-            shop.getOrderPrice(l, user);
+            shop.getOrderPrice(orderList, user);
         }
         catch(TakeAwayBillException e){
             assertEquals("Limite 30 ordini superato.", e.getMessage());
             throw e;
         }
+    }
+
+    @Test
+    public void testCommisionOnLessThan10Euros() throws TakeAwayBillException{
+        assertEquals(9.5, shop.getOrderPrice(orderList, user), DELTA);
     }
 }
