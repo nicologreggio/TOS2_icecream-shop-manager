@@ -6,6 +6,7 @@ package it.unipd.tos.business;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertFalse;
@@ -86,5 +87,81 @@ public class TakeAwayBillTest {
     @Test
     public void testCommisionOnLessThan10Euros() throws TakeAwayBillException{
         assertEquals(9.5, shop.getOrderPrice(orderList, user), DELTA);
+    }
+
+    @Test
+    public void testShopTime(){
+        assertEquals(LocalTime.now().withNano(0), shop.getTime().withNano(0));
+        LocalTime t=LocalTime.of(18,15);
+        shop.setCustomTime(t);
+        assertEquals(t, shop.getTime());
+        shop.turnCustomTimeOff();
+        assertEquals(LocalTime.now().withNano(0), shop.getTime().withNano(0));
+    }
+
+    @Test
+    public void testGiveawayConditions() throws TakeAwayBillException{
+        User u=new User("Davide", "Cesare", 17);
+
+        shop.setCustomTime(LocalTime.of(17,30));
+        assertFalse(shop.giveawayApplies(u));
+        assertFalse(shop.giveawayApplies(user));
+        
+        shop.setCustomTime(LocalTime.of(18,1));
+        assertTrue(shop.giveawayApplies(u));
+        assertFalse(shop.giveawayApplies(user));
+
+        shop.setCustomTime(LocalTime.of(18,59));
+        assertTrue(shop.giveawayApplies(u));
+        assertFalse(shop.giveawayApplies(user));
+
+        shop.setCustomTime(LocalTime.of(19,00));
+        assertFalse(shop.giveawayApplies(u));
+        assertFalse(shop.giveawayApplies(user));
+
+        shop.turnCustomTimeOff();
+    }
+
+    @Test
+    public void test10GiveawaysUnderage() throws TakeAwayBillException{
+        User[] u={
+            new User("Miles", "House", 3),
+            new User("Max", "Russell", 10),
+            new User("Alessandro", "Vianello", 8),
+            new User("Brigitte", "Kemp", 9),
+            new User("Darren", "Cunningham", 9),
+            new User("Reyes", "Garcia", 11),
+            new User("Chuck", "Vasquez", 9),
+            new User("Spencer", "Garrett", 10),
+            new User("John", "Park", 3),
+            new User("Dionne", "Bernard", 16),
+            new User("Davide", "Cesare", 17)
+        };
+
+        shop.setCustomTime(LocalTime.of(18,40));
+        shop.setRandomSeed(44);
+
+        orderList.add(pudding);
+        double price=12.5;
+
+        assertEquals(0, shop.getOrderPrice(orderList, u[0]), DELTA);//true
+        assertEquals(price, shop.getOrderPrice(orderList, user), DELTA);//no
+        assertEquals(0, shop.getOrderPrice(orderList, u[1]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[2]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[3]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[4]), DELTA);//true
+        assertEquals(price, shop.getOrderPrice(orderList, u[2]), DELTA);
+        assertEquals(price, shop.getOrderPrice(orderList, u[5]), DELTA);//false
+        assertEquals(0, shop.getOrderPrice(orderList, u[5]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[6]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[7]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[8]), DELTA);//true
+        assertEquals(0, shop.getOrderPrice(orderList, u[9]), DELTA);//true
+        assertEquals(price, shop.getOrderPrice(orderList, u[10]), DELTA);//out
+
+
+        shop.turnCustomTimeOff();
+        shop.resetRandom();
+        shop.resetGiveaway();
     }
 }
